@@ -32,6 +32,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\OneToOne(mappedBy: 'owner', cascade: ['persist', 'remove'])]
+    private ?Person $person = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -105,5 +108,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
 
         return $data;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Person $person): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($person === null && $this->person !== null) {
+            $this->person->setOwner(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($person !== null && $person->getOwner() !== $this) {
+            $person->setOwner($this);
+        }
+
+        $this->person = $person;
+
+        return $this;
     }
 }
