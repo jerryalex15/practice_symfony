@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ApiResource(
     input: PersonInput::class,
     output: PersonOutput::class,
+    map: true,
     processor: PersonInputProcessor::class
 )]
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
